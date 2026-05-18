@@ -1,0 +1,56 @@
+name: 'Drives Checkout'
+description: 'Check out a drive'
+author: 'github'
+branding:
+  icon: 'hard-drive'
+  color: 'blue'
+
+inputs:
+  drive-name:
+    description: 'Name of the drive'
+    required: false
+    default: default
+  path:
+    description: 'Directory path under workspace to mount the drive to'
+    required: false
+  filesystem-type:
+    description: 'File system type for empty disk (e.g., ext4, btrfs, xfs)'
+    required: false
+    default: 'btrfs'
+  mkfs-options:
+    description: 'Additional options to pass to mkfs command (space-separated)'
+    required: false
+    default: '-M -d single -m single'
+  mount-options:
+    description: 'Additional options to pass to mount command (space-separated)'
+    required: false
+    default: 'compress-force=zstd:3'
+  disk-size:
+    description: 'Drive size (e.g. "10G", "800G", "1T", or raw bytes). Only applies when creating a new drive — existing drives keep their original size.'
+    required: false
+    default: '10G'
+  prefetch:
+    description: |
+      When 'true' (default 'false'), eagerly fetch the drive's contents
+      in the background after mount completes. Subsequent reads in the
+      job hit a local cache instead of paying network latency on first
+      read.
+
+      Recommended for read-heavy consumers (test jobs, build jobs that
+      read most of the drive). Leave off for drives where the consumer
+      reads only a small subset, since bulk prefetch wastes bandwidth.
+      This is a no-op when checkout falls back to the empty-disk path
+      (for example, when the drive does not exist yet or has no existing
+      contents to prefetch).
+    required: false
+    default: 'false'
+
+outputs:
+  drive-available:
+    description: 'Whether drive was available and checked out'
+  mounted-path:
+    description: 'The path where drive was mounted'
+
+runs:
+  using: 'node24'
+  main: 'dist/index.js'

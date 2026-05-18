@@ -1,0 +1,23 @@
+name: 'Drives Commit'
+description: 'Commit changes to drive'
+author: 'github'
+branding:
+  icon: 'upload'
+  color: 'green'
+
+inputs:
+  drive-name:
+    description: 'Name of the drive'
+    required: false
+    default: default
+  path:
+    description: 'Directory path under workspace to mount the drive to'
+    required: false
+
+outputs:
+  flushed:
+    description: 'Whether drive content was flushed to Azure storage'
+
+runs:
+  using: 'node24'
+  main: 'dist/index.js'
