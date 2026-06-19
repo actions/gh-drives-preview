@@ -13,6 +13,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
+      drives: write   # use `read` if you only run checkout (no commit)
     steps:
       - name: Checkout Drive
         uses: actions/gh-drives-preview/checkout@main
