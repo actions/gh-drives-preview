@@ -13,7 +13,10 @@ inputs:
   path:
     description: 'Directory path under workspace to mount the drive to'
     required: false
-
+  github-token:
+    description: 'GitHub token used for drives permission checks'
+    required: false
+    default: ${{ github.token }}
 outputs:
   flushed:
     description: 'Whether drive content was flushed to Azure storage'
