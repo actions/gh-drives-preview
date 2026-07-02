@@ -79,3 +79,13 @@ outputs:
 runs:
   using: 'node24'
   main: 'dist/index.js'
+  # Release the drive's writer claim at job end. A writer checkout holds the
+  # writer mutex for the whole job so a later commit can publish; a job that
+  # acquires it but never commits (a read-only job that kept the default
+  # write: auto with drives: write granted, or a skipped/failed commit) would
+  # otherwise hold it until its lease expires (~60s), blocking every concurrent
+  # writer of the same drive. This releases it immediately instead. No-op after
+  # a commit (which already released it) or a read-only checkout (which never
+  # acquired one). always() so a cancelled job frees the claim too.
+  post: 'dist/post.js'
+  post-if: always()
