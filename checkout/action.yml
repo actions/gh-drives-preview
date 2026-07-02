@@ -44,7 +44,32 @@ inputs:
       contents to prefetch).
     required: false
     default: 'false'
+  write:
+    description: |
+      Whether checkout acquires the drive's writer claim (the writer mutex) so a
+      later `commit` in this job can publish. One of 'auto', 'true', 'false'.
 
+        - 'auto' (default): infer from `permissions: drives:`. If the workflow
+          granted `drives: write`, checkout acquires the claim and holds it for
+          the whole job, so the commit publishes against the exact version read
+          at checkout with no other run publishing in between. If it granted
+          only `drives: read`, checkout stays read-only — you do not need to
+          also set `write: true`.
+        - 'true': always acquire the claim, and fail fast if
+          `permissions: drives: write` is missing. Use for expensive or
+          long-running jobs that should reserve the writer slot up front.
+        - 'false': never acquire the claim; force a read-only checkout even when
+          `drives: write` is granted (e.g. a read-only checkout in a job that
+          writes a different drive). Needs only `permissions: drives: read` and
+          never blocks a concurrent writer.
+
+      The commit action requires a claim acquired here and fails fast without it.
+    required: false
+    default: 'auto'
+  github-token:
+    description: 'GitHub token used for drives permission checks'
+    required: false
+    default: ${{ github.token }}
 outputs:
   drive-available:
     description: 'Whether drive was available and checked out'
